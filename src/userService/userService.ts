@@ -112,7 +112,6 @@ export const getRedeemedBooks = async (firebase_uid: string) => {
       `,
       [user_id]
     );
-
     return res.rows;
   } catch (err) {
     console.error("Error fetching audio files:", err);
