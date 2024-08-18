@@ -1,0 +1,8 @@
+/src/.env
+/src/initAuth.ts
+/src/ca-certificate.crt
+schema.graphql
+node_modules
+init.sql
+.env
+graphql.schema.json

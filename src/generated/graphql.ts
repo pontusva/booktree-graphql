@@ -1,0 +1,461 @@
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import gql from 'graphql-tag';
+export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
+export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
+/** All built-in and custom scalars, mapped to their actual values */
+export type Scalars = {
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  Upload: { input: any; output: any; }
+};
+
+export type AudioFile = {
+  __typename?: 'AudioFile';
+  audio_created_at: Scalars['String']['output'];
+  audio_description?: Maybe<Scalars['String']['output']>;
+  audio_file_id: Scalars['String']['output'];
+  audio_file_url: Scalars['String']['output'];
+  audio_hls_path?: Maybe<Scalars['String']['output']>;
+  audio_title: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  purchase_code_id: Scalars['String']['output'];
+  purchased_at: Scalars['String']['output'];
+  user_id: Scalars['String']['output'];
+};
+
+export type ImageUploadInput = {
+  docType: Scalars['String']['input'];
+  file: Scalars['Upload']['input'];
+};
+
+export type InsertBookResponse = {
+  __typename?: 'InsertBookResponse';
+  id: Scalars['ID']['output'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  becomeAuthor?: Maybe<Response>;
+  createUser?: Maybe<Response>;
+  insertBook?: Maybe<InsertBookResponse>;
+  insertHlsName?: Maybe<Response>;
+  insertPurchaseCodes?: Maybe<Response>;
+  processAudio?: Maybe<ProcessAudioResponse>;
+  redeemCode?: Maybe<Response>;
+  requestAudio?: Maybe<RequestAudioResponse>;
+};
+
+
+export type MutationBecomeAuthorArgs = {
+  firebase_uid: Scalars['String']['input'];
+};
+
+
+export type MutationCreateUserArgs = {
+  email: Scalars['String']['input'];
+  firebase_uid: Scalars['String']['input'];
+  is_author: Scalars['Boolean']['input'];
+  username: Scalars['String']['input'];
+};
+
+
+export type MutationInsertBookArgs = {
+  author_id: Scalars['ID']['input'];
+  cover_image_url?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  file_name: Scalars['String']['input'];
+  file_url: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+
+export type MutationInsertHlsNameArgs = {
+  audio_file_id: Scalars['String']['input'];
+  hls_path: Scalars['String']['input'];
+};
+
+
+export type MutationInsertPurchaseCodesArgs = {
+  audio_file_id: Scalars['String']['input'];
+  author_id: Scalars['String']['input'];
+  code: Scalars['String']['input'];
+  expires_at: Scalars['String']['input'];
+  is_redeemed: Scalars['Boolean']['input'];
+};
+
+
+export type MutationProcessAudioArgs = {
+  authorId: Scalars['ID']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  docs?: InputMaybe<Array<ImageUploadInput>>;
+  fileName: Scalars['String']['input'];
+  fileUrl: Scalars['String']['input'];
+  title: Scalars['String']['input'];
+};
+
+
+export type MutationRedeemCodeArgs = {
+  code: Scalars['String']['input'];
+  firebase_uid: Scalars['String']['input'];
+};
+
+
+export type MutationRequestAudioArgs = {
+  audioName: Scalars['String']['input'];
+};
+
+export type ProcessAudioResponse = {
+  __typename?: 'ProcessAudioResponse';
+  book?: Maybe<InsertBookResponse>;
+  hlsUrl?: Maybe<Scalars['String']['output']>;
+};
+
+export type PurchaseCodes = {
+  __typename?: 'PurchaseCodes';
+  audio_file_id: Scalars['String']['output'];
+  author_id: Scalars['String']['output'];
+  code: Scalars['String']['output'];
+  expires_at: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  is_redeemed: Scalars['Boolean']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type Query = {
+  __typename?: 'Query';
+  getAuthorBooks?: Maybe<Array<Maybe<UploadBook>>>;
+  getPurchaseCodes?: Maybe<Array<Maybe<PurchaseCodes>>>;
+  getRedeemedBooks?: Maybe<Array<Maybe<RedemeedBooks>>>;
+  getUserAudioFiles?: Maybe<Array<Maybe<AudioFile>>>;
+  isAuthor?: Maybe<User>;
+  userById?: Maybe<User>;
+  users?: Maybe<Array<Maybe<User>>>;
+};
+
+
+export type QueryGetAuthorBooksArgs = {
+  author_id: Scalars['ID']['input'];
+};
+
+
+export type QueryGetPurchaseCodesArgs = {
+  author_id: Scalars['String']['input'];
+};
+
+
+export type QueryGetRedeemedBooksArgs = {
+  firebase_uid: Scalars['String']['input'];
+};
+
+
+export type QueryGetUserAudioFilesArgs = {
+  firebase_uid: Scalars['String']['input'];
+};
+
+
+export type QueryIsAuthorArgs = {
+  firebase_uid: Scalars['String']['input'];
+};
+
+
+export type QueryUserByIdArgs = {
+  id: Scalars['ID']['input'];
+};
+
+export type RedemeedBooks = {
+  __typename?: 'RedemeedBooks';
+  cover_image_url?: Maybe<Scalars['String']['output']>;
+  created_at: Scalars['String']['output'];
+  description: Scalars['String']['output'];
+  file_name: Scalars['String']['output'];
+  file_url: Scalars['String']['output'];
+  hls_path?: Maybe<Scalars['String']['output']>;
+  id: Scalars['ID']['output'];
+  purchased_at: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type RequestAudioResponse = {
+  __typename?: 'RequestAudioResponse';
+  hlsUrl: Scalars['String']['output'];
+};
+
+export type Response = {
+  __typename?: 'Response';
+  success: Scalars['Boolean']['output'];
+};
+
+export type SuccessResult = {
+  __typename?: 'SuccessResult';
+  message?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
+export type UploadBook = {
+  __typename?: 'UploadBook';
+  author_id: Scalars['ID']['output'];
+  created_at: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  file_name: Scalars['String']['output'];
+  file_url: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  title: Scalars['String']['output'];
+};
+
+export type User = {
+  __typename?: 'User';
+  created_at: Scalars['String']['output'];
+  email: Scalars['String']['output'];
+  firebase_uid: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  is_author: Scalars['Boolean']['output'];
+  username: Scalars['String']['output'];
+};
+
+
+
+export type ResolverTypeWrapper<T> = Promise<T> | T;
+
+
+export type ResolverWithResolve<TResult, TParent, TContext, TArgs> = {
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> = ResolverFn<TResult, TParent, TContext, TArgs> | ResolverWithResolve<TResult, TParent, TContext, TArgs>;
+
+export type ResolverFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Promise<TResult> | TResult;
+
+export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => AsyncIterable<TResult> | Promise<AsyncIterable<TResult>>;
+
+export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => TResult | Promise<TResult>;
+
+export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
+  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
+  resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
+}
+
+export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
+  subscribe: SubscriptionSubscribeFn<any, TParent, TContext, TArgs>;
+  resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;
+}
+
+export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =
+  | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
+  | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
+
+export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
+  | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
+  | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
+
+export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
+  parent: TParent,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
+
+export type IsTypeOfResolverFn<T = {}, TContext = {}> = (obj: T, context: TContext, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+
+export type NextResolverFn<T> = () => Promise<T>;
+
+export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (
+  next: NextResolverFn<TResult>,
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => TResult | Promise<TResult>;
+
+
+
+/** Mapping between all available schema types and the resolvers types */
+export type ResolversTypes = {
+  AudioFile: ResolverTypeWrapper<AudioFile>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  ImageUploadInput: ImageUploadInput;
+  InsertBookResponse: ResolverTypeWrapper<InsertBookResponse>;
+  Mutation: ResolverTypeWrapper<{}>;
+  ProcessAudioResponse: ResolverTypeWrapper<ProcessAudioResponse>;
+  PurchaseCodes: ResolverTypeWrapper<PurchaseCodes>;
+  Query: ResolverTypeWrapper<{}>;
+  RedemeedBooks: ResolverTypeWrapper<RedemeedBooks>;
+  RequestAudioResponse: ResolverTypeWrapper<RequestAudioResponse>;
+  Response: ResolverTypeWrapper<Response>;
+  String: ResolverTypeWrapper<Scalars['String']['output']>;
+  SuccessResult: ResolverTypeWrapper<SuccessResult>;
+  Upload: ResolverTypeWrapper<Scalars['Upload']['output']>;
+  UploadBook: ResolverTypeWrapper<UploadBook>;
+  User: ResolverTypeWrapper<User>;
+};
+
+/** Mapping between all available schema types and the resolvers parents */
+export type ResolversParentTypes = {
+  AudioFile: AudioFile;
+  Boolean: Scalars['Boolean']['output'];
+  ID: Scalars['ID']['output'];
+  ImageUploadInput: ImageUploadInput;
+  InsertBookResponse: InsertBookResponse;
+  Mutation: {};
+  ProcessAudioResponse: ProcessAudioResponse;
+  PurchaseCodes: PurchaseCodes;
+  Query: {};
+  RedemeedBooks: RedemeedBooks;
+  RequestAudioResponse: RequestAudioResponse;
+  Response: Response;
+  String: Scalars['String']['output'];
+  SuccessResult: SuccessResult;
+  Upload: Scalars['Upload']['output'];
+  UploadBook: UploadBook;
+  User: User;
+};
+
+export type AudioFileResolvers<ContextType = any, ParentType extends ResolversParentTypes['AudioFile'] = ResolversParentTypes['AudioFile']> = {
+  audio_created_at?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  audio_description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  audio_file_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  audio_file_url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  audio_hls_path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  audio_title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  purchase_code_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  purchased_at?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type InsertBookResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['InsertBookResponse'] = ResolversParentTypes['InsertBookResponse']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  becomeAuthor?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationBecomeAuthorArgs, 'firebase_uid'>>;
+  createUser?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'email' | 'firebase_uid' | 'is_author' | 'username'>>;
+  insertBook?: Resolver<Maybe<ResolversTypes['InsertBookResponse']>, ParentType, ContextType, RequireFields<MutationInsertBookArgs, 'author_id' | 'file_name' | 'file_url' | 'title'>>;
+  insertHlsName?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationInsertHlsNameArgs, 'audio_file_id' | 'hls_path'>>;
+  insertPurchaseCodes?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationInsertPurchaseCodesArgs, 'audio_file_id' | 'author_id' | 'code' | 'expires_at' | 'is_redeemed'>>;
+  processAudio?: Resolver<Maybe<ResolversTypes['ProcessAudioResponse']>, ParentType, ContextType, RequireFields<MutationProcessAudioArgs, 'authorId' | 'fileName' | 'fileUrl' | 'title'>>;
+  redeemCode?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationRedeemCodeArgs, 'code' | 'firebase_uid'>>;
+  requestAudio?: Resolver<Maybe<ResolversTypes['RequestAudioResponse']>, ParentType, ContextType, RequireFields<MutationRequestAudioArgs, 'audioName'>>;
+};
+
+export type ProcessAudioResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProcessAudioResponse'] = ResolversParentTypes['ProcessAudioResponse']> = {
+  book?: Resolver<Maybe<ResolversTypes['InsertBookResponse']>, ParentType, ContextType>;
+  hlsUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PurchaseCodesResolvers<ContextType = any, ParentType extends ResolversParentTypes['PurchaseCodes'] = ResolversParentTypes['PurchaseCodes']> = {
+  audio_file_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  author_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  code?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  expires_at?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  is_redeemed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getAuthorBooks?: Resolver<Maybe<Array<Maybe<ResolversTypes['UploadBook']>>>, ParentType, ContextType, RequireFields<QueryGetAuthorBooksArgs, 'author_id'>>;
+  getPurchaseCodes?: Resolver<Maybe<Array<Maybe<ResolversTypes['PurchaseCodes']>>>, ParentType, ContextType, RequireFields<QueryGetPurchaseCodesArgs, 'author_id'>>;
+  getRedeemedBooks?: Resolver<Maybe<Array<Maybe<ResolversTypes['RedemeedBooks']>>>, ParentType, ContextType, RequireFields<QueryGetRedeemedBooksArgs, 'firebase_uid'>>;
+  getUserAudioFiles?: Resolver<Maybe<Array<Maybe<ResolversTypes['AudioFile']>>>, ParentType, ContextType, RequireFields<QueryGetUserAudioFilesArgs, 'firebase_uid'>>;
+  isAuthor?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryIsAuthorArgs, 'firebase_uid'>>;
+  userById?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserByIdArgs, 'id'>>;
+  users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
+};
+
+export type RedemeedBooksResolvers<ContextType = any, ParentType extends ResolversParentTypes['RedemeedBooks'] = ResolversParentTypes['RedemeedBooks']> = {
+  cover_image_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  created_at?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  file_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  file_url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  hls_path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  purchased_at?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type RequestAudioResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['RequestAudioResponse'] = ResolversParentTypes['RequestAudioResponse']> = {
+  hlsUrl?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['Response'] = ResolversParentTypes['Response']> = {
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type SuccessResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['SuccessResult'] = ResolversParentTypes['SuccessResult']> = {
+  message?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  success?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
+  name: 'Upload';
+}
+
+export type UploadBookResolvers<ContextType = any, ParentType extends ResolversParentTypes['UploadBook'] = ResolversParentTypes['UploadBook']> = {
+  author_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  created_at?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  file_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  file_url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  created_at?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  firebase_uid?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  is_author?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type Resolvers<ContextType = any> = {
+  AudioFile?: AudioFileResolvers<ContextType>;
+  InsertBookResponse?: InsertBookResponseResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
+  ProcessAudioResponse?: ProcessAudioResponseResolvers<ContextType>;
+  PurchaseCodes?: PurchaseCodesResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
+  RedemeedBooks?: RedemeedBooksResolvers<ContextType>;
+  RequestAudioResponse?: RequestAudioResponseResolvers<ContextType>;
+  Response?: ResponseResolvers<ContextType>;
+  SuccessResult?: SuccessResultResolvers<ContextType>;
+  Upload?: GraphQLScalarType;
+  UploadBook?: UploadBookResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
+};
+
