@@ -1,5 +1,4 @@
 import { ApolloServer } from "@apollo/server";
-// import { startStandaloneServer } from "@apollo/server/standalone";
 import { init } from "./initAuth";
 import { readFileSync } from "fs";
 import { pool } from "./initAuth";
@@ -9,13 +8,14 @@ import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { graphqlUploadExpress } from "graphql-upload-ts";
 import auth from "firebase-admin";
-
 import express from "express";
 import http from "http";
 import cors from "cors";
-init;
+
+init; // Initialize Firebase Admin or other services
 const app = express();
 const httpServer = http.createServer(app);
+
 pool.on("error", (err) => {
   console.error("Unexpected error on idle client", err);
   process.exit(-1);
@@ -42,49 +42,54 @@ const server = new ApolloServer({
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
-await server.start();
+const startServer = async () => {
+  await server.start();
 
-app.use(
-  "/",
-  graphqlUploadExpress({
-    maxFileSize: 10000000,
-    maxFiles: 10,
-    // If you are using framework around express like [ NestJS or Apollo Serve ]
-    // use this options overrideSendResponse to allow nestjs to handle response errors like throwing exceptions
-    overrideSendResponse: false,
-  })
-);
+  app.use(
+    "/",
+    graphqlUploadExpress({
+      maxFileSize: 10000000,
+      maxFiles: 10,
+      overrideSendResponse: false,
+    })
+  );
 
-app.use(
-  "/",
-  cors<cors.CorsRequest>(),
-  express.json(),
-  expressMiddleware(server, {
-    context: async ({ req }) => {
-      const token = req.headers.authorization || "";
-      let uid: string | null = null;
+  app.use(
+    "/",
+    cors<cors.CorsRequest>(),
+    express.json(),
+    expressMiddleware(server, {
+      context: async ({ req }) => {
+        const token = req.headers.authorization || "";
+        let uid: string | null = null;
 
-      try {
-        if (token) {
-          const decodedToken = await auth
-            .auth()
-            .verifyIdToken(token.replace("Bearer ", ""));
-          uid = decodedToken.uid;
+        try {
+          if (token) {
+            const decodedToken = await auth
+              .auth()
+              .verifyIdToken(token.replace("Bearer ", ""));
+            uid = decodedToken.uid;
+          }
+        } catch (error) {
+          console.error("Token verification failed:", error);
         }
-      } catch (error) {
-        console.error("Token verification failed:", error);
-      }
 
-      return { uid }; // Provide UID to resolvers via context
-    },
-  })
-);
-app.use(graphqlUploadExpress);
+        return { uid }; // Provide UID to resolvers via context
+      },
+    })
+  );
+  app.use(graphqlUploadExpress);
 
-app.post("/api/request-audio", uploadAudio);
+  app.post("/api/request-audio", uploadAudio);
 
-await new Promise<void>((resolve) =>
-  httpServer.listen({ port: 4000 }, resolve)
-);
+  await new Promise<void>((resolve) =>
+    httpServer.listen({ port: 4000 }, resolve)
+  );
 
-console.log(`🚀 Server ready at http://localhost:4000/`);
+  console.log(`🚀 Server ready at http://localhost:4000/`);
+};
+
+startServer().catch((error) => {
+  console.error("Error starting server:", error);
+  process.exit(1);
+});

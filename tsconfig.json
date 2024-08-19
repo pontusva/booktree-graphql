@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "rootDir": "src", // Set this to your source directory
-    "outDir": "dist",
+    "rootDir": "src", // Your source directory
+    "outDir": "dist", // Your output directory
     "lib": ["es2020"],
     "target": "es2020",
-    "module": "ESNext",
+    "module": "commonjs", // Change this to commonjs
     "moduleResolution": "node",
     "esModuleInterop": true,
     "types": ["node"]

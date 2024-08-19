@@ -6,3 +6,4 @@ node_modules
 init.sql
 .env
 graphql.schema.json
+dist
