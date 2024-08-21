@@ -26,6 +26,7 @@ export type AudioFile = {
   audio_file_url: Scalars['String']['output'];
   audio_hls_path?: Maybe<Scalars['String']['output']>;
   audio_title: Scalars['String']['output'];
+  cover_image_url?: Maybe<Scalars['String']['output']>;
   id: Scalars['ID']['output'];
   purchase_code_id: Scalars['String']['output'];
   purchased_at: Scalars['String']['output'];
@@ -339,6 +340,7 @@ export type AudioFileResolvers<ContextType = any, ParentType extends ResolversPa
   audio_file_url?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   audio_hls_path?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   audio_title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  cover_image_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   purchase_code_id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   purchased_at?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

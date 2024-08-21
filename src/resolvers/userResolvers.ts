@@ -17,9 +17,9 @@ export const userResolvers = {
       return await getUserById(id);
     },
     getRedeemedBooks: async (parent, { firebase_uid }, ctx) => {
-      return await getRedeemedBooks(firebase_uid);
+      return await getRedeemedBooks(ctx.uid);
     },
-    getUserAudioFiles: async (parent, { firebase_uid }) => {
+    getUserAudioFiles: async (parent, { firebase_uid }, ctx) => {
       return await getUserAudioFiles(firebase_uid);
     },
   },

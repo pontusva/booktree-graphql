@@ -152,7 +152,8 @@ export const getUserAudioFiles = async (firebase_uid: string) => {
           a.description AS audio_description,
           a.file_url AS audio_file_url,
           a.hls_path AS audio_hls_path,
-          a.created_at AS audio_created_at
+          a.created_at AS audio_created_at,
+          a.cover_image_url AS cover_image_url
         FROM Purchases p
         JOIN Users u ON p.user_id = u.id
         JOIN AudioFiles a ON p.id = a.id
