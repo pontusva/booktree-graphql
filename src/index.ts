@@ -95,8 +95,6 @@ const startServer = async () => {
   );
   app.use(graphqlUploadExpress);
 
-  app.post("/api/request-audio", uploadAudio);
-
   await new Promise<void>((resolve) =>
     httpServer.listen({ port: 4000 }, resolve)
   );
