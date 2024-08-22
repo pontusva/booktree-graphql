@@ -21,10 +21,23 @@ pool.on("error", (err) => {
   process.exit(-1);
 });
 
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "https://studio.apollographql.com",
+    "https://plankton-app-u4e6o.ondigitalocean.app/",
+  ],
+  methods: ["GET", "POST"],
+  credentials: false,
+};
+
+app.use(cors(corsOptions));
+
 const verifyIdToken = async (req, res, next) => {
   const idToken = req.headers.authorization?.split(" ")[1];
-  if (!idToken) return res.status(401).json({ error: "Unauthorized" });
-
+  if (!idToken) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
   try {
     const decodedToken = await auth.auth().verifyIdToken(idToken);
     req.user = decodedToken;
@@ -33,6 +46,8 @@ const verifyIdToken = async (req, res, next) => {
     res.status(401).json({ error: "Invalid or expired token" });
   }
 };
+
+app.use(verifyIdToken);
 
 const typeDefs = readFileSync("./schema.graphql", { encoding: "utf-8" });
 
@@ -46,7 +61,7 @@ const startServer = async () => {
   await server.start();
 
   app.use(
-    "/",
+    "/graphql",
     graphqlUploadExpress({
       maxFileSize: 10000000,
       maxFiles: 10,
@@ -55,7 +70,7 @@ const startServer = async () => {
   );
 
   app.use(
-    "/",
+    "/graphql",
     cors<cors.CorsRequest>(),
     express.json(),
     expressMiddleware(server, {
@@ -86,7 +101,7 @@ const startServer = async () => {
     httpServer.listen({ port: 4000 }, resolve)
   );
 
-  console.log(`🚀 Server ready at http://localhost:4000/`);
+  console.log(`🚀 Server ready at https://yourdomain.com/`);
 };
 
 startServer().catch((error) => {

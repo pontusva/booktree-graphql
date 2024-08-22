@@ -7,7 +7,7 @@
     "start": "tsx --watch ./src/index.ts",
     "codegen": "graphql-codegen --config ./src/codegen.ts"
   },
-  "type": "module",
+  "type": "commonjs",
   "keywords": [],
   "author": "",
   "license": "ISC",
