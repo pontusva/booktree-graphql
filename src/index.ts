@@ -86,8 +86,7 @@ const server = new ApolloServer({
       },
     })
   );
-
-  app.post("/api/request-audio", uploadAudio);
+  app.use(graphqlUploadExpress);
 
   await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
 
