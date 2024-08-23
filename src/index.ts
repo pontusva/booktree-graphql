@@ -11,6 +11,10 @@ import { readFileSync } from "fs";
 import { resolvers } from "./resolvers";
 import { init, pool } from "./initAuth";
 
+interface JwtPayload extends jwt.JwtPayload {
+  userId: string;
+}
+
 init;
 const app = express();
 const httpServer = http.createServer(app);
@@ -26,17 +30,16 @@ const verifyAuthToken = async (req, res, next) => {
   const authHeader = req.headers.authorization || "";
   const token = authHeader.split(" ")[1];
 
-  if (!token) {
-    return next();
-  }
-
   try {
     const decodedToken = await admin.auth().verifyIdToken(token);
     req.user = { id: decodedToken.uid };
     next();
   } catch (firebaseError) {
     try {
-      const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+      const decodedToken = jwt.verify(
+        token,
+        process.env.JWT_SECRET
+      ) as JwtPayload;
       req.user = { id: decodedToken.userId };
       next();
     } catch (jwtError) {
