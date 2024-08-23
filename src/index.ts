@@ -1,18 +1,24 @@
-import { ApolloServer } from "@apollo/server";
-import { init } from "./initAuth";
-import { readFileSync } from "fs";
-import { pool } from "./initAuth";
-import { uploadAudio } from "./endpoints/uploadAudio";
-import { resolvers } from "./resolvers";
-import { expressMiddleware } from "@apollo/server/express4";
-import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
-import { graphqlUploadExpress } from "graphql-upload-ts";
-import auth from "firebase-admin";
-import express from "express";
-import http from "http";
-import cors from "cors";
+const { ApolloServer } = require("@apollo/server");
+const { readFileSync } = require("fs");
+const express = require("express");
+const http = require("http");
+const cors = require("cors");
+const { expressMiddleware } = require("@apollo/server/express4");
+const {
+  ApolloServerPluginDrainHttpServer,
+} = require("@apollo/server/plugin/drainHttpServer");
+const { graphqlUploadExpress } = require("graphql-upload-ts");
+const admin = require("firebase-admin");
 
-init; // Initialize Firebase Admin or other services
+// Import your custom modules
+const { init } = require("./initAuth");
+const { pool } = require("./initAuth");
+const { uploadAudio } = require("./endpoints/uploadAudio");
+const { resolvers } = require("./resolvers");
+
+// Initialize Firebase Admin SDK
+init;
+
 const app = express();
 const httpServer = http.createServer(app);
 
@@ -21,33 +27,18 @@ pool.on("error", (err) => {
   process.exit(-1);
 });
 
-const corsOptions = {
-  origin: [
-    "http://localhost:5173",
-    "https://studio.apollographql.com",
-    "https://plankton-app-u4e6o.ondigitalocean.app/",
-  ],
-  methods: ["GET", "POST"],
-  credentials: false,
-};
-
-app.use(cors(corsOptions));
-
 const verifyIdToken = async (req, res, next) => {
   const idToken = req.headers.authorization?.split(" ")[1];
-  if (!idToken) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+  if (!idToken) return res.status(401).json({ error: "Unauthorized" });
+
   try {
-    const decodedToken = await auth.auth().verifyIdToken(idToken);
+    const decodedToken = await admin.auth().verifyIdToken(idToken);
     req.user = decodedToken;
     next();
   } catch (error) {
     res.status(401).json({ error: "Invalid or expired token" });
   }
 };
-
-app.use(verifyIdToken);
 
 const typeDefs = readFileSync("./schema.graphql", { encoding: "utf-8" });
 
@@ -57,30 +48,32 @@ const server = new ApolloServer({
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
 });
 
-const startServer = async () => {
+(async () => {
   await server.start();
 
   app.use(
-    "/graphql",
+    "/",
     graphqlUploadExpress({
       maxFileSize: 10000000,
       maxFiles: 10,
+      // If you are using a framework around express like NestJS or Apollo Server
+      // use this option overrideSendResponse to allow NestJS to handle response errors like throwing exceptions
       overrideSendResponse: false,
     })
   );
 
   app.use(
-    "/graphql",
-    cors<cors.CorsRequest>(),
+    "/",
+    cors(),
     express.json(),
     expressMiddleware(server, {
       context: async ({ req }) => {
         const token = req.headers.authorization || "";
-        let uid: string | null = null;
+        let uid = null;
 
         try {
           if (token) {
-            const decodedToken = await auth
+            const decodedToken = await admin
               .auth()
               .verifyIdToken(token.replace("Bearer ", ""));
             uid = decodedToken.uid;
@@ -93,18 +86,10 @@ const startServer = async () => {
       },
     })
   );
-  app.use(graphqlUploadExpress);
 
   app.post("/api/request-audio", uploadAudio);
 
-  await new Promise<void>((resolve) =>
-    httpServer.listen({ port: 4000 }, resolve)
-  );
+  await new Promise((resolve) => httpServer.listen({ port: 4000 }, resolve));
 
-  console.log(`🚀 Server ready at https://yourdomain.com/`);
-};
-
-startServer().catch((error) => {
-  console.error("Error starting server:", error);
-  process.exit(1);
-});
+  console.log(`🚀 Server ready at http://localhost:4000/`);
+})();
