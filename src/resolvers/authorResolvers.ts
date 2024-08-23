@@ -17,27 +17,48 @@ import { getStorage } from "firebase-admin/storage";
 export const authorResolvers = {
   Upload: GraphQLUpload,
   Query: {
-    users: async (parent, { firebase_uid }) => {
+    users: async (parent, { firebase_uid }, ctx) => {
+      if (!ctx.user) {
+        throw new Error("Authentication required");
+      }
       return await isAuthor(firebase_uid);
     },
-    isAuthor: async (parent, { firebase_uid }) => await isAuthor(firebase_uid),
-    getAuthorBooks: async (parent, { author_id }, context) => {
-      console.log(context);
+    isAuthor: async (parent, { firebase_uid }, ctx) => {
+      if (!ctx.user) {
+        throw new Error("Authentication required");
+      }
+      await isAuthor(firebase_uid);
+    },
+    getAuthorBooks: async (parent, { author_id }, ctx) => {
+      if (!ctx.user) {
+        throw new Error("Authentication required");
+      }
       return await getAuthorBooks(author_id);
     },
-    getPurchaseCodes: async (parent, { author_id }) => {
+    getPurchaseCodes: async (parent, { author_id }, ctx) => {
+      if (!ctx.user) {
+        throw new Error("Authentication required");
+      }
       return await getPurchaseCodes(author_id);
     },
   },
 
   Mutation: {
-    becomeAuthor: async (parent, { firebase_uid }) =>
-      await becomeAuthor(firebase_uid),
+    becomeAuthor: async (parent, { firebase_uid }, ctx) => {
+      if (!ctx.user) {
+        throw new Error("Authentication required");
+      }
+      await becomeAuthor(firebase_uid);
+    },
 
     insertPurchaseCodes: async (
       parent,
-      { author_id, code, audio_file_id, expires_at, is_redeemed }
+      { author_id, code, audio_file_id, expires_at, is_redeemed },
+      ctx
     ) => {
+      if (!ctx.user) {
+        throw new Error("Authentication required");
+      }
       return await insertPurchaseCodes(
         author_id,
         code,
@@ -68,6 +89,9 @@ export const authorResolvers = {
       },
       ctx
     ) => {
+      if (!ctx.user) {
+        throw new Error("Authentication required");
+      }
       try {
         const insertBookResponse = await insertBook(
           Number(authorId),

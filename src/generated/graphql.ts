@@ -33,6 +33,19 @@ export type AudioFile = {
   user_id: Scalars['String']['output'];
 };
 
+export type AuthPayload = {
+  __typename?: 'AuthPayload';
+  token: Scalars['String']['output'];
+  user: GraphqlUser;
+};
+
+export type GraphqlUser = {
+  __typename?: 'GraphqlUser';
+  email: Scalars['String']['output'];
+  id: Scalars['ID']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type ImageUploadInput = {
   docType: Scalars['String']['input'];
   file: Scalars['Upload']['input'];
@@ -50,6 +63,7 @@ export type Mutation = {
   insertBook?: Maybe<InsertBookResponse>;
   insertHlsName?: Maybe<Response>;
   insertPurchaseCodes?: Maybe<Response>;
+  login?: Maybe<AuthPayload>;
   processAudio?: Maybe<ProcessAudioResponse>;
   redeemCode?: Maybe<Response>;
   requestAudio?: Maybe<RequestAudioResponse>;
@@ -91,6 +105,12 @@ export type MutationInsertPurchaseCodesArgs = {
   code: Scalars['String']['input'];
   expires_at: Scalars['String']['input'];
   is_redeemed: Scalars['Boolean']['input'];
+};
+
+
+export type MutationLoginArgs = {
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
 };
 
 
@@ -294,7 +314,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   AudioFile: ResolverTypeWrapper<AudioFile>;
+  AuthPayload: ResolverTypeWrapper<AuthPayload>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
+  GraphqlUser: ResolverTypeWrapper<GraphqlUser>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   ImageUploadInput: ImageUploadInput;
   InsertBookResponse: ResolverTypeWrapper<InsertBookResponse>;
@@ -315,7 +337,9 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   AudioFile: AudioFile;
+  AuthPayload: AuthPayload;
   Boolean: Scalars['Boolean']['output'];
+  GraphqlUser: GraphqlUser;
   ID: Scalars['ID']['output'];
   ImageUploadInput: ImageUploadInput;
   InsertBookResponse: InsertBookResponse;
@@ -348,6 +372,19 @@ export type AudioFileResolvers<ContextType = any, ParentType extends ResolversPa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type AuthPayloadResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
+  token?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['GraphqlUser'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type GraphqlUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['GraphqlUser'] = ResolversParentTypes['GraphqlUser']> = {
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type InsertBookResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['InsertBookResponse'] = ResolversParentTypes['InsertBookResponse']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
@@ -359,6 +396,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   insertBook?: Resolver<Maybe<ResolversTypes['InsertBookResponse']>, ParentType, ContextType, RequireFields<MutationInsertBookArgs, 'author_id' | 'file_name' | 'file_url' | 'title'>>;
   insertHlsName?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationInsertHlsNameArgs, 'audio_file_id' | 'hls_path'>>;
   insertPurchaseCodes?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationInsertPurchaseCodesArgs, 'audio_file_id' | 'author_id' | 'code' | 'expires_at' | 'is_redeemed'>>;
+  login?: Resolver<Maybe<ResolversTypes['AuthPayload']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   processAudio?: Resolver<Maybe<ResolversTypes['ProcessAudioResponse']>, ParentType, ContextType, RequireFields<MutationProcessAudioArgs, 'authorId' | 'fileName' | 'fileUrl' | 'title'>>;
   redeemCode?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationRedeemCodeArgs, 'code' | 'firebase_uid'>>;
   requestAudio?: Resolver<Maybe<ResolversTypes['RequestAudioResponse']>, ParentType, ContextType, RequireFields<MutationRequestAudioArgs, 'audioName'>>;
@@ -447,6 +485,8 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 
 export type Resolvers<ContextType = any> = {
   AudioFile?: AudioFileResolvers<ContextType>;
+  AuthPayload?: AuthPayloadResolvers<ContextType>;
+  GraphqlUser?: GraphqlUserResolvers<ContextType>;
   InsertBookResponse?: InsertBookResponseResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   ProcessAudioResponse?: ProcessAudioResponseResolvers<ContextType>;
