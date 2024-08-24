@@ -1,15 +1,16 @@
-import express from "express";
+import express, { RequestHandler } from "express";
 import http from "http";
 import cors from "cors";
 import { ApolloServer } from "@apollo/server";
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 import { graphqlUploadExpress } from "graphql-upload-ts";
-import admin from "firebase-admin";
+import { getAuth } from "firebase-admin/auth";
 import jwt from "jsonwebtoken";
 import { readFileSync } from "fs";
 import { resolvers } from "./resolvers";
 import { init, pool } from "./initAuth";
+import cookieParser from "cookie-parser";
 
 interface JwtPayload extends jwt.JwtPayload {
   userId: string;
@@ -18,8 +19,17 @@ interface JwtPayload extends jwt.JwtPayload {
 init;
 const app = express();
 const httpServer = http.createServer(app);
+app.use(cookieParser());
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://sandbox.embed.apollographql.com",
+      "http://localhost:5173",
+    ], // Allow requests from Apollo Studio
+    credentials: true, // Allow credentials (cookies, authorization headers)
+  })
+);
 
 pool.on("error", (err) => {
   console.error("Unexpected error on idle client", err);
@@ -27,29 +37,44 @@ pool.on("error", (err) => {
 });
 
 const verifyAuthToken = async (req, res, next) => {
-  const authHeader = req.headers.authorization || "";
-  const token = authHeader.split(" ")[1];
+  const authorizationHeader = req.headers.authorization || "";
+  const headerToken = authorizationHeader.replace("Bearer ", "");
+  const cookieToken = req.cookies.authToken;
+  const token = headerToken || cookieToken;
+
+  if (!token) {
+    return next();
+  }
 
   try {
-    const decodedToken = await admin.auth().verifyIdToken(token);
+    const decodedToken = await getAuth().verifyIdToken(token);
     req.user = { id: decodedToken.uid };
-    next();
-  } catch (firebaseError) {
+
+    return next();
+  } catch (error) {
+    if (error.code === "auth/id-token-expired") {
+      return res
+        .status(401)
+        .json({ error: "Token has expired. Please log in again." });
+    }
+
+    // Attempt to verify the token using custom JWT verification
     try {
-      const decodedToken = jwt.verify(
-        token,
-        process.env.JWT_SECRET
-      ) as JwtPayload;
+      const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
       req.user = { id: decodedToken.userId };
-      next();
+
+      return next();
     } catch (jwtError) {
-      console.error("Token verification failed:", jwtError);
-      res.status(401).json({ error: "Invalid or expired token" });
+      // Handle JWT specific errors, including expiration
+      if (jwtError.name === "TokenExpiredError") {
+        res.clearCookie("authToken");
+      }
+
+      // Handle other JWT errors
+      return res.status(401).json({ error: "Invalid or expired token" });
     }
   }
 };
-
-app.use(verifyAuthToken);
 
 const typeDefs = readFileSync("./schema.graphql", { encoding: "utf-8" });
 
@@ -72,11 +97,11 @@ server.start().then(() => {
   app.use(
     "/",
     express.json(),
+    verifyAuthToken,
     expressMiddleware(server, {
-      context: async ({ req }) => {
-        // User will be available from the middleware
-        console.log(req.user);
-        return { user: req.user };
+      context: async ({ req, res }) => {
+        const user = req.user || null;
+        return { req, res, user };
       },
     })
   );

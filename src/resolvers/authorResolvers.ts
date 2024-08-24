@@ -18,25 +18,45 @@ export const authorResolvers = {
   Upload: GraphQLUpload,
   Query: {
     users: async (parent, { firebase_uid }, ctx) => {
-      if (!ctx.user) {
+      // Check for the presence of authToken or userId
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
       return await isAuthor(firebase_uid);
     },
     isAuthor: async (parent, { firebase_uid }, ctx) => {
-      if (!ctx.user) {
+      // Check for the presence of authToken or userId
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
       await isAuthor(firebase_uid);
     },
     getAuthorBooks: async (parent, { author_id }, ctx) => {
-      if (!ctx.user) {
+      // Check for the presence of authToken or userId
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
       return await getAuthorBooks(author_id);
     },
     getPurchaseCodes: async (parent, { author_id }, ctx) => {
-      if (!ctx.user) {
+      // Check for the presence of authToken or userId
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
       return await getPurchaseCodes(author_id);
@@ -45,9 +65,16 @@ export const authorResolvers = {
 
   Mutation: {
     becomeAuthor: async (parent, { firebase_uid }, ctx) => {
-      if (!ctx.user) {
+      // Check for the presence of authToken or userId
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
+
+      // Proceed if at least one of authToken or userId is present
       await becomeAuthor(firebase_uid);
     },
 
@@ -56,7 +83,12 @@ export const authorResolvers = {
       { author_id, code, audio_file_id, expires_at, is_redeemed },
       ctx
     ) => {
-      if (!ctx.user) {
+      // Check for the presence of authToken or userId
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
       return await insertPurchaseCodes(
@@ -89,7 +121,12 @@ export const authorResolvers = {
       },
       ctx
     ) => {
-      if (!ctx.user) {
+      // Check for the presence of authToken or userId
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
       try {

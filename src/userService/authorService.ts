@@ -6,6 +6,7 @@ export const isAuthor = async (firebase_uid: string) => {
       "SELECT * FROM users WHERE firebase_uid = $1 AND is_author = TRUE",
       [firebase_uid]
     );
+    console.log(res.rows[0]);
     return res.rows[0];
   } catch (err) {
     console.error("Error fetching users:", err);

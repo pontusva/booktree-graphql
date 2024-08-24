@@ -43,7 +43,6 @@ export type GraphqlUser = {
   __typename?: 'GraphqlUser';
   email: Scalars['String']['output'];
   id: Scalars['ID']['output'];
-  name?: Maybe<Scalars['String']['output']>;
 };
 
 export type ImageUploadInput = {
@@ -381,7 +380,6 @@ export type AuthPayloadResolvers<ContextType = any, ParentType extends Resolvers
 export type GraphqlUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['GraphqlUser'] = ResolversParentTypes['GraphqlUser']> = {
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 

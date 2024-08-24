@@ -13,25 +13,41 @@ import jwt from "jsonwebtoken";
 export const userResolvers = {
   Query: {
     users: async (parent, args, ctx) => {
-      if (!ctx.user) {
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
       return await getAllUsers();
     },
     userById: async (parent, { id }, ctx) => {
-      if (!ctx.user) {
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
       return await getUserById(id);
     },
     getRedeemedBooks: async (parent, { firebase_uid }, ctx) => {
-      if (!ctx.user) {
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
       return await getRedeemedBooks(firebase_uid);
     },
     getUserAudioFiles: async (parent, { firebase_uid }, ctx) => {
-      if (!ctx.user) {
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
       return await getUserAudioFiles(firebase_uid);
@@ -45,10 +61,17 @@ export const userResolvers = {
     ) => {
       return await createUser(email, firebase_uid, is_author, username);
     },
-    redeemCode: async (parent, { code, firebase_uid }) => {
+    redeemCode: async (parent, { code, firebase_uid }, ctx) => {
+      const authTokenPresent = !!ctx.req.cookies.authToken;
+      const userIdPresent = !!(ctx.req.user && ctx.req.user.id);
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
+        throw new Error("Authentication required");
+      }
       return await redeemCode(code, firebase_uid);
     },
-    async login(parent, { email, password }) {
+    async login(parent, { email, password }, ctx) {
       try {
         const res = await pool.query(
           "SELECT id, email, password FROM graphql WHERE email = $1",
@@ -67,6 +90,12 @@ export const userResolvers = {
 
         const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, {
           expiresIn: "1h",
+        });
+
+        ctx.res.cookie("authToken", token, {
+          httpOnly: true,
+          secure: false, // Use HTTPS in production
+          sameSite: "none", // CSRF protection
         });
         return {
           token,
