@@ -6,27 +6,23 @@ export const isAuthor = async (firebase_uid: string) => {
       "SELECT * FROM users WHERE firebase_uid = $1 AND is_author = TRUE",
       [firebase_uid]
     );
-    console.log(res.rows[0]);
+
     return res.rows[0];
   } catch (err) {
     console.error("Error fetching users:", err);
     throw new Error("Failed to fetch users");
   }
 };
-
 export const becomeAuthor = async (firebase_uid: string) => {
   try {
     const res = await pool.query(
-      "UPDATE users SET is_author = TRUE WHERE firebase_uid = $1",
+      "UPDATE users SET is_author = TRUE WHERE firebase_uid = $1 RETURNING *;",
       [firebase_uid]
     );
-    return {
-      success: true,
-      user: res.rows[0],
-    };
+    return res.rows[0];
   } catch (err) {
-    console.error("Error fetching users:", err);
-    throw new Error("Failed to fetch users");
+    console.error("Error updating user to author:", err);
+    throw new Error("Failed to update user to author");
   }
 };
 

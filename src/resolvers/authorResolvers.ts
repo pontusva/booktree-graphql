@@ -37,7 +37,8 @@ export const authorResolvers = {
         // Neither authToken nor userId is present
         throw new Error("Authentication required");
       }
-      await isAuthor(firebase_uid);
+      console.log(firebase_uid);
+      return await isAuthor(firebase_uid);
     },
     getAuthorBooks: async (parent, { author_id }, ctx) => {
       // Check for the presence of authToken or userId
@@ -75,7 +76,7 @@ export const authorResolvers = {
       }
 
       // Proceed if at least one of authToken or userId is present
-      await becomeAuthor(firebase_uid);
+      return await becomeAuthor(firebase_uid);
     },
 
     insertPurchaseCodes: async (
