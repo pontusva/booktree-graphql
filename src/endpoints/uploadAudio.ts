@@ -6,7 +6,7 @@ import path from "path";
 import fs from "fs-extra";
 import ffmpeg from "fluent-ffmpeg";
 import { v4 as uuidv4 } from "uuid";
-// import { __dirname, __filename } from "./config";
+import { __dirname, __filename } from "./config";
 
 export const uploadAudio = async (req: Request, res: Response) => {
   const { fileName } = req.body;
