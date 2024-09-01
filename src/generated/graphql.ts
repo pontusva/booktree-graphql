@@ -188,7 +188,7 @@ export type Query = {
 
 
 export type QueryGetAuthorBooksArgs = {
-  author_id: Scalars['ID']['input'];
+  firebase_uid: Scalars['ID']['input'];
 };
 
 
@@ -474,7 +474,7 @@ export type PurchaseCodesResolvers<ContextType = any, ParentType extends Resolve
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  getAuthorBooks?: Resolver<Maybe<Array<Maybe<ResolversTypes['UploadBook']>>>, ParentType, ContextType, RequireFields<QueryGetAuthorBooksArgs, 'author_id'>>;
+  getAuthorBooks?: Resolver<Maybe<Array<Maybe<ResolversTypes['UploadBook']>>>, ParentType, ContextType, RequireFields<QueryGetAuthorBooksArgs, 'firebase_uid'>>;
   getBookByAudioId?: Resolver<Maybe<ResolversTypes['CombinedBook']>, ParentType, ContextType, RequireFields<QueryGetBookByAudioIdArgs, 'firebase_uid' | 'id'>>;
   getCurrentAudioFile?: Resolver<Maybe<ResolversTypes['AudioFile']>, ParentType, ContextType, RequireFields<QueryGetCurrentAudioFileArgs, 'user_id'>>;
   getPurchaseCodes?: Resolver<Maybe<Array<Maybe<ResolversTypes['PurchaseCodes']>>>, ParentType, ContextType, RequireFields<QueryGetPurchaseCodesArgs, 'author_id'>>;
