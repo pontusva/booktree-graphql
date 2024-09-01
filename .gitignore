@@ -7,3 +7,4 @@ init.sql
 .env
 graphql.schema.json
 dist
+.DS_Store
