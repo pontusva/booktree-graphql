@@ -204,7 +204,7 @@ export type QueryGetCurrentAudioFileArgs = {
 
 
 export type QueryGetPurchaseCodesArgs = {
-  author_id: Scalars['String']['input'];
+  firebase_uid: Scalars['String']['input'];
 };
 
 
@@ -477,7 +477,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   getAuthorBooks?: Resolver<Maybe<Array<Maybe<ResolversTypes['UploadBook']>>>, ParentType, ContextType, RequireFields<QueryGetAuthorBooksArgs, 'firebase_uid'>>;
   getBookByAudioId?: Resolver<Maybe<ResolversTypes['CombinedBook']>, ParentType, ContextType, RequireFields<QueryGetBookByAudioIdArgs, 'firebase_uid' | 'id'>>;
   getCurrentAudioFile?: Resolver<Maybe<ResolversTypes['AudioFile']>, ParentType, ContextType, RequireFields<QueryGetCurrentAudioFileArgs, 'user_id'>>;
-  getPurchaseCodes?: Resolver<Maybe<Array<Maybe<ResolversTypes['PurchaseCodes']>>>, ParentType, ContextType, RequireFields<QueryGetPurchaseCodesArgs, 'author_id'>>;
+  getPurchaseCodes?: Resolver<Maybe<Array<Maybe<ResolversTypes['PurchaseCodes']>>>, ParentType, ContextType, RequireFields<QueryGetPurchaseCodesArgs, 'firebase_uid'>>;
   getRedeemedBooks?: Resolver<Maybe<Array<Maybe<ResolversTypes['RedemeedBooks']>>>, ParentType, ContextType, RequireFields<QueryGetRedeemedBooksArgs, 'firebase_uid'>>;
   getUserAudioFiles?: Resolver<Maybe<Array<Maybe<ResolversTypes['AudioFile']>>>, ParentType, ContextType, RequireFields<QueryGetUserAudioFilesArgs, 'firebase_uid'>>;
   isAuthor?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryIsAuthorArgs, 'firebase_uid'>>;

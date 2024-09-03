@@ -63,7 +63,7 @@ export const authorResolvers = {
     },
     getPurchaseCodes: async (
       parent,
-      { author_id },
+      { firebase_uid },
       ctx
     ) => {
       // Check for the presence of authToken or userId
@@ -76,7 +76,7 @@ export const authorResolvers = {
         // Neither authToken nor userId is present
         throw new Error('Authentication required')
       }
-      return await getPurchaseCodes(author_id)
+      return await getPurchaseCodes(firebase_uid)
     }
   },
 

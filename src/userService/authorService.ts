@@ -113,9 +113,22 @@ export const insertPurchaseCodes = async (
 }
 
 export const getPurchaseCodes = async (
-  author_id: string
+  firebase_uid: string
 ) => {
   try {
+    const authorRes = await pool.query(
+      `
+      SELECT id FROM Users WHERE firebase_uid = $1
+      `,
+      [firebase_uid]
+    )
+
+    if (authorRes.rowCount === 0) {
+      throw new Error('Author not found')
+    }
+
+    const author_id = authorRes.rows[0].id
+
     const res = await pool.query(
       `SELECT
             af.title,
