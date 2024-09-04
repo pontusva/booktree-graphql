@@ -83,6 +83,7 @@ export type Mutation = {
   redeemCode?: Maybe<Response>;
   requestAudio?: Maybe<RequestAudioResponse>;
   setCurrentAudioFile?: Maybe<Response>;
+  updatePlaybackProgress?: Maybe<Response>;
 };
 
 
@@ -154,6 +155,13 @@ export type MutationRequestAudioArgs = {
 export type MutationSetCurrentAudioFileArgs = {
   audio_file_id: Scalars['ID']['input'];
   user_id: Scalars['ID']['input'];
+};
+
+
+export type MutationUpdatePlaybackProgressArgs = {
+  audio_file_id: Scalars['ID']['input'];
+  firebase_uid: Scalars['ID']['input'];
+  progress_seconds: Scalars['Int']['input'];
 };
 
 export type ProcessAudioResponse = {
@@ -357,6 +365,7 @@ export type ResolversTypes = {
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
   ImageUploadInput: ImageUploadInput;
   InsertBookResponse: ResolverTypeWrapper<InsertBookResponse>;
+  Int: ResolverTypeWrapper<Scalars['Int']['output']>;
   Mutation: ResolverTypeWrapper<{}>;
   ProcessAudioResponse: ResolverTypeWrapper<ProcessAudioResponse>;
   PurchaseCodes: ResolverTypeWrapper<PurchaseCodes>;
@@ -381,6 +390,7 @@ export type ResolversParentTypes = {
   ID: Scalars['ID']['output'];
   ImageUploadInput: ImageUploadInput;
   InsertBookResponse: InsertBookResponse;
+  Int: Scalars['Int']['output'];
   Mutation: {};
   ProcessAudioResponse: ProcessAudioResponse;
   PurchaseCodes: PurchaseCodes;
@@ -454,6 +464,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   redeemCode?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationRedeemCodeArgs, 'code' | 'firebase_uid'>>;
   requestAudio?: Resolver<Maybe<ResolversTypes['RequestAudioResponse']>, ParentType, ContextType, RequireFields<MutationRequestAudioArgs, 'audioName'>>;
   setCurrentAudioFile?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationSetCurrentAudioFileArgs, 'audio_file_id' | 'user_id'>>;
+  updatePlaybackProgress?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationUpdatePlaybackProgressArgs, 'audio_file_id' | 'firebase_uid' | 'progress_seconds'>>;
 };
 
 export type ProcessAudioResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['ProcessAudioResponse'] = ResolversParentTypes['ProcessAudioResponse']> = {

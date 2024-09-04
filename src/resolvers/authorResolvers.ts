@@ -7,11 +7,11 @@ import {
   insertPurchaseCodes,
   getPurchaseCodes,
   insertImageUrl
-} from '../userService/authorService'
+} from '../services/authorService'
 import { GraphQLUpload } from 'graphql-upload-ts'
 import { v4 as uuidv4 } from 'uuid'
 import { uploadAudio } from '../endpoints/uploadAudio'
-import { insertHlsName } from '../userService/userService'
+import { insertHlsName } from '../services/userService'
 import { getStorage } from 'firebase-admin/storage'
 
 export const authorResolvers = {
