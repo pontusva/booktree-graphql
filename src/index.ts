@@ -100,14 +100,7 @@ const server = new ApolloServer({
 })
 
 server.start().then(() => {
-  app.use(
-    '/',
-    graphqlUploadExpress({
-      maxFileSize: 10000000,
-      maxFiles: 10,
-      overrideSendResponse: false
-    })
-  )
+  app.use('/', graphqlUploadExpress())
 
   app.use(
     '/',

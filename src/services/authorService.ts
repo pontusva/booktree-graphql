@@ -57,6 +57,52 @@ export const insertBook = async (
   }
 }
 
+export const updateAuthor = async (
+  firebase_uid: string,
+  bio: string,
+  profile_picture_url: string,
+  contact_info: string
+) => {
+  // Retrieve user from the database using firebase_uid
+  const user = await pool.query(
+    'SELECT id FROM users WHERE firebase_uid = $1',
+    [firebase_uid]
+  )
+
+  if (user.rows.length === 0) {
+    throw new Error('User not found')
+  }
+
+  const userId = user.rows[0].id
+
+  // Check if the author entry exists
+  const existingAuthor = await pool.query(
+    'SELECT * FROM authors WHERE user_id = $1',
+    [userId]
+  )
+
+  if (existingAuthor.rows.length > 0) {
+    // If the author exists, update the entry
+    const updatedAuthor = await pool.query(
+      `UPDATE authors
+       SET bio = $1, profile_picture_url = $2, contact_info = $3
+       WHERE user_id = $4
+       RETURNING *`,
+      [bio, profile_picture_url, contact_info, userId]
+    )
+    return updatedAuthor.rows[0]
+  } else {
+    // If the author does not exist, insert a new entry
+    const newAuthor = await pool.query(
+      `INSERT INTO authors (user_id, bio, profile_picture_url, contact_info)
+       VALUES ($1, $2, $3, $4)
+       RETURNING *`,
+      [userId, bio, profile_picture_url, contact_info]
+    )
+    return newAuthor.rows[0]
+  }
+}
+
 export const getAuthorBooks = async (
   firebase_uid: string
 ) => {
@@ -82,6 +128,33 @@ export const getAuthorBooks = async (
   } catch (err) {
     console.error('Error fetching users:', err)
     throw new Error('Failed to fetch users')
+  }
+}
+
+export const getAuthor = async (firebase_uid: string) => {
+  try {
+    // Query to get author details by joining Users and Authors tables
+    const authorRes = await pool.query(
+      `SELECT u.id AS userId, 
+       a.user_id AS authorId, 
+       a.bio, 
+       a.profile_picture_url AS "profilePictureUrl", 
+       a.contact_info 
+        FROM Users u
+        JOIN Authors a ON u.id = a.user_id
+        WHERE u.firebase_uid = $1`,
+      [firebase_uid]
+    )
+
+    if (authorRes.rowCount === 0) {
+      throw new Error('Author not found')
+    }
+    console.log(authorRes.rows[0])
+    // Return the author details
+    return authorRes.rows[0]
+  } catch (err) {
+    console.error('Error fetching author:', err)
+    throw new Error('Failed to fetch author')
   }
 }
 

@@ -40,6 +40,14 @@ export type AuthPayload = {
   user: GraphqlUser;
 };
 
+export type AuthorInput = {
+  __typename?: 'AuthorInput';
+  authorid: Scalars['ID']['output'];
+  bio?: Maybe<Scalars['String']['output']>;
+  contact_info?: Maybe<Scalars['String']['output']>;
+  profile_picture_url?: Maybe<Scalars['String']['output']>;
+};
+
 export type CombinedBook = {
   __typename?: 'CombinedBook';
   author_id?: Maybe<Scalars['ID']['output']>;
@@ -83,6 +91,7 @@ export type Mutation = {
   redeemCode?: Maybe<Response>;
   requestAudio?: Maybe<RequestAudioResponse>;
   setCurrentAudioFile?: Maybe<Response>;
+  updateAuthor?: Maybe<AuthorInput>;
   updatePlaybackProgress?: Maybe<Response>;
 };
 
@@ -158,6 +167,14 @@ export type MutationSetCurrentAudioFileArgs = {
 };
 
 
+export type MutationUpdateAuthorArgs = {
+  bio?: InputMaybe<Scalars['String']['input']>;
+  contact_info?: InputMaybe<Scalars['String']['input']>;
+  firebase_uid: Scalars['String']['input'];
+  profile_picture_url?: InputMaybe<Scalars['String']['input']>;
+};
+
+
 export type MutationUpdatePlaybackProgressArgs = {
   audio_file_id: Scalars['ID']['input'];
   firebase_uid: Scalars['ID']['input'];
@@ -183,6 +200,7 @@ export type PurchaseCodes = {
 
 export type Query = {
   __typename?: 'Query';
+  getAuthor?: Maybe<AuthorInput>;
   getAuthorBooks?: Maybe<Array<Maybe<UploadBook>>>;
   getBookByAudioId?: Maybe<CombinedBook>;
   getCurrentAudioFile?: Maybe<AudioFile>;
@@ -192,6 +210,11 @@ export type Query = {
   isAuthor?: Maybe<User>;
   userById?: Maybe<User>;
   users?: Maybe<Array<Maybe<User>>>;
+};
+
+
+export type QueryGetAuthorArgs = {
+  firebase_uid: Scalars['String']['input'];
 };
 
 
@@ -360,6 +383,7 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = {
   AudioFile: ResolverTypeWrapper<AudioFile>;
   AuthPayload: ResolverTypeWrapper<AuthPayload>;
+  AuthorInput: ResolverTypeWrapper<AuthorInput>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   CombinedBook: ResolverTypeWrapper<CombinedBook>;
   GraphqlUser: ResolverTypeWrapper<GraphqlUser>;
@@ -385,6 +409,7 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   AudioFile: AudioFile;
   AuthPayload: AuthPayload;
+  AuthorInput: AuthorInput;
   Boolean: Scalars['Boolean']['output'];
   CombinedBook: CombinedBook;
   GraphqlUser: GraphqlUser;
@@ -428,6 +453,14 @@ export type AuthPayloadResolvers<ContextType = any, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type AuthorInputResolvers<ContextType = any, ParentType extends ResolversParentTypes['AuthorInput'] = ResolversParentTypes['AuthorInput']> = {
+  authorid?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  contact_info?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  profile_picture_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type CombinedBookResolvers<ContextType = any, ParentType extends ResolversParentTypes['CombinedBook'] = ResolversParentTypes['CombinedBook']> = {
   author_id?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
   cover_image_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
@@ -465,6 +498,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   redeemCode?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationRedeemCodeArgs, 'code' | 'firebase_uid'>>;
   requestAudio?: Resolver<Maybe<ResolversTypes['RequestAudioResponse']>, ParentType, ContextType, RequireFields<MutationRequestAudioArgs, 'audioName'>>;
   setCurrentAudioFile?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationSetCurrentAudioFileArgs, 'audio_file_id' | 'user_id'>>;
+  updateAuthor?: Resolver<Maybe<ResolversTypes['AuthorInput']>, ParentType, ContextType, RequireFields<MutationUpdateAuthorArgs, 'firebase_uid'>>;
   updatePlaybackProgress?: Resolver<Maybe<ResolversTypes['Response']>, ParentType, ContextType, RequireFields<MutationUpdatePlaybackProgressArgs, 'audio_file_id' | 'firebase_uid' | 'progress_seconds'>>;
 };
 
@@ -486,6 +520,7 @@ export type PurchaseCodesResolvers<ContextType = any, ParentType extends Resolve
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getAuthor?: Resolver<Maybe<ResolversTypes['AuthorInput']>, ParentType, ContextType, RequireFields<QueryGetAuthorArgs, 'firebase_uid'>>;
   getAuthorBooks?: Resolver<Maybe<Array<Maybe<ResolversTypes['UploadBook']>>>, ParentType, ContextType, RequireFields<QueryGetAuthorBooksArgs, 'firebase_uid'>>;
   getBookByAudioId?: Resolver<Maybe<ResolversTypes['CombinedBook']>, ParentType, ContextType, RequireFields<QueryGetBookByAudioIdArgs, 'firebase_uid' | 'id'>>;
   getCurrentAudioFile?: Resolver<Maybe<ResolversTypes['AudioFile']>, ParentType, ContextType, RequireFields<QueryGetCurrentAudioFileArgs, 'user_id'>>;
@@ -556,6 +591,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
 export type Resolvers<ContextType = any> = {
   AudioFile?: AudioFileResolvers<ContextType>;
   AuthPayload?: AuthPayloadResolvers<ContextType>;
+  AuthorInput?: AuthorInputResolvers<ContextType>;
   CombinedBook?: CombinedBookResolvers<ContextType>;
   GraphqlUser?: GraphqlUserResolvers<ContextType>;
   InsertBookResponse?: InsertBookResponseResolvers<ContextType>;

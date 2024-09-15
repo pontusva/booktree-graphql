@@ -6,7 +6,9 @@ import {
   getAuthorBooks,
   insertPurchaseCodes,
   getPurchaseCodes,
-  insertImageUrl
+  insertImageUrl,
+  updateAuthor,
+  getAuthor
 } from '../services/authorService'
 import { GraphQLUpload } from 'graphql-upload-ts'
 import { v4 as uuidv4 } from 'uuid'
@@ -43,6 +45,19 @@ export const authorResolvers = {
       }
 
       return await isAuthor(firebase_uid)
+    },
+    getAuthor: async (parent, { firebase_uid }, ctx) => {
+      // Check for the presence of authToken or userId
+      const authTokenPresent = !!ctx.req.cookies.authToken
+      const userIdPresent = !!(
+        ctx.req.user && ctx.req.user.id
+      )
+
+      if (!authTokenPresent && !userIdPresent) {
+        // Neither authToken nor userId is present
+        throw new Error('Authentication required')
+      }
+      return await getAuthor(firebase_uid)
     },
     getAuthorBooks: async (
       parent,
@@ -95,6 +110,33 @@ export const authorResolvers = {
 
       // Proceed if at least one of authToken or userId is present
       return await becomeAuthor(firebase_uid)
+    },
+
+    updateAuthor: async (
+      parent,
+      {
+        firebase_uid,
+        bio,
+        profile_picture_url,
+        contact_info
+      },
+      ctx
+    ) => {
+      const authTokenPresent = !!ctx.req.cookies.authToken
+      const userIdPresent = !!(
+        ctx.req.user && ctx.req.user.id
+      )
+
+      if (!authTokenPresent && !userIdPresent) {
+        throw new Error('Authentication required')
+      }
+
+      updateAuthor(
+        firebase_uid,
+        bio,
+        profile_picture_url,
+        contact_info
+      )
     },
 
     insertPurchaseCodes: async (
@@ -290,7 +332,7 @@ export const authorResolvers = {
           files: uploadedFiles
         }
       } catch (error) {
-        throw new Error('Failed to process audio')
+        throw new Error(error)
       }
     }
   }
