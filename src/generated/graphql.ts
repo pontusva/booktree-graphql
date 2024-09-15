@@ -267,6 +267,7 @@ export type SuccessResult = {
 export type UploadBook = {
   __typename?: 'UploadBook';
   author_id: Scalars['ID']['output'];
+  cover_image_url?: Maybe<Scalars['String']['output']>;
   created_at: Scalars['String']['output'];
   description?: Maybe<Scalars['String']['output']>;
   file_name: Scalars['String']['output'];
@@ -531,6 +532,7 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 
 export type UploadBookResolvers<ContextType = any, ParentType extends ResolversParentTypes['UploadBook'] = ResolversParentTypes['UploadBook']> = {
   author_id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  cover_image_url?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   created_at?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   file_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
